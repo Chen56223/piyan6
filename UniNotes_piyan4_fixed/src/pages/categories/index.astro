@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategoryCard from '../../components/CategoryCard.astro';
+import { categories } from '../../lib/site';
+const all = await getCollection('articles');
+---
+<BaseLayout title="分類總覽" description="瀏覽 UniNotes 的所有文章分類。">
+  <div class="container page-title"><h1>分類總覽</h1><p class="muted">選擇有興趣的主題開始閱讀。</p></div>
+  <section class="section container">
+    <div class="grid">
+      {categories.map((c) => <CategoryCard {...c} count={all.filter((a) => a.data.category === c.label).length} />)}
+    </div>
+  </section>
+</BaseLayout>

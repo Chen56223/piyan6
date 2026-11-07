@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import { url, fmt } from '../lib/site';
+const data = (await getCollection('articles')).map((a) => ({
+  href: url(`/articles/${a.id}/`),
+  title: a.data.title,
+  description: a.data.description,
+  category: a.data.category,
+  tags: a.data.tags,
+  date: fmt(a.data.date),
+}));
+---
+<BaseLayout title="搜尋" description="搜尋 UniNotes 的文章標題、簡介與標籤。">
+  <div class="container page-title"><h1>搜尋文章</h1><p class="muted">可搜尋文章標題、簡介與標籤。</p></div>
+  <section class="section container">
+    <SearchBar />
+    <p id="status" class="muted" aria-live="polite"></p>
+    <div id="results" class="grid"></div>
+  </section>
+  <script id="search-data" type="application/json" set:html={JSON.stringify(data)} />
+  <script is:inline>
+    (function () {
+      var data = JSON.parse(document.getElementById('search-data').textContent);
+      var input = document.querySelector('.search-bar input');
+      var results = document.getElementById('results');
+      var status = document.getElementById('status');
+      function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+      function render(q) {
+        var key = q.trim().toLowerCase();
+        var list = key ? data.filter(function (a) {
+          return (a.title + ' ' + a.description + ' ' + a.tags.join(' ')).toLowerCase().indexOf(key) !== -1;
+        }) : data;
+        status.textContent = key ? '找到 ' + list.length + ' 篇與「' + q.trim() + '」相關的文章' : '全部文章（' + list.length + ' 篇）';
+        results.innerHTML = list.map(function (a) {
+          return '<a class="card" href="' + esc(a.href) + '"><div class="meta">' + esc(a.category) + '　' + esc(a.date) + '</div><h3>' + esc(a.title) + '</h3><p>' + esc(a.description) + '</p><div class="tags">' + a.tags.map(function (t) { return '<span class="badge">' + esc(t) + '</span>'; }).join('') + '</div></a>';
+        }).join('');
+        if (key && !list.length) results.innerHTML = '<p class="empty">沒有符合的文章，試試其他關鍵字。</p>';
+      }
+      input.value = new URLSearchParams(location.search).get('q') || '';
+      input.addEventListener('input', function () { render(input.value); });
+      render(input.value);
+    })();
+  </script>
+</BaseLayout>

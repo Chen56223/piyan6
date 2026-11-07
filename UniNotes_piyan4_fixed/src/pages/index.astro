@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { categories, url } from '../lib/site';
+const all = (await getCollection('articles')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const latest = all.slice(0, 6);
+---
+<BaseLayout>
+  <section class="hero">
+    <div class="container">
+      <h1>給大學生的數位學習筆記</h1>
+      <p>整理 AI 工具、科技知識、數位工具與學習技巧，建立一個可以隨時查閱的知識庫。</p>
+      <SearchBar />
+    </div>
+  </section>
+  <section class="section container">
+    <h2>文章分類</h2>
+    <div class="grid">
+      {categories.map((c) => <CategoryCard {...c} count={all.filter((a) => a.data.category === c.label).length} />)}
+    </div>
+  </section>
+  <section class="section container">
+    <h2>最新文章</h2>
+    <div class="grid">
+      {latest.map((a) => <ArticleCard id={a.id} {...a.data} />)}
+    </div>
+    <p><a href={url('/categories/')}>瀏覽所有分類</a></p>
+  </section>
+</BaseLayout>

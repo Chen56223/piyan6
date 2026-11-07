@@ -1,0 +1,7 @@
+---
+import { url } from '../lib/site';
+---
+<form class="search-bar" action={url('/search/')} method="get" role="search">
+  <input type="search" name="q" placeholder="搜尋標題、簡介或標籤" aria-label="搜尋文章" />
+  <button class="btn" type="submit">搜尋</button>
+</form>

@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { slugOf, url, fmt } from '../../lib/site';
+export async function getStaticPaths() {
+  const all = await getCollection('articles');
+  return all.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const d = entry.data;
+---
+<BaseLayout title={d.title} description={d.description}>
+  <div class="container article-layout">
+    <article>
+      <div class="article-meta">
+        <a class="badge" href={url(`/categories/${slugOf(d.category)}/`)}>{d.category}</a>
+        <span>發布 {fmt(d.date)}</span>
+        <span>更新 {fmt(d.updated)}</span>
+      </div>
+      <div class="prose"><Content /></div>
+      {d.tags.length > 0 && <div class="tags">{d.tags.map((t) => <span class="badge">{t}</span>)}</div>}
+    </article>
+    <aside><TableOfContents headings={headings} /></aside>
+  </div>
+</BaseLayout>

@@ -1,0 +1,10 @@
+---
+import { url } from '../lib/site';
+interface Props { slug: string; label: string; description: string; count: number; }
+const { slug, label, description, count } = Astro.props;
+---
+<a class="card" href={url(`/categories/${slug}/`)}>
+  <h3>{label}</h3>
+  <p>{description}</p>
+  <div class="tags"><span class="badge">{count} 篇文章</span></div>
+</a>

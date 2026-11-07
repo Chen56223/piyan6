@@ -1,0 +1,11 @@
+---
+import { url, fmt } from '../lib/site';
+interface Props { id: string; title: string; description: string; category: string; tags: string[]; date: Date; }
+const { id, title, description, category, tags, date } = Astro.props;
+---
+<a class="card" href={url(`/articles/${id}/`)}>
+  <div class="meta">{category}　{fmt(date)}</div>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  {tags.length > 0 && <div class="tags">{tags.map((t) => <span class="badge">{t}</span>)}</div>}
+</a>

@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { categories, url } from '../lib/site';
+---
+<BaseLayout title="關於" description="認識 UniNotes 的目標與內容。">
+  <div class="container page-title"><h1>關於 UniNotes</h1></div>
+  <section class="section container">
+    <div class="prose">
+      <p>UniNotes 是一個提供大學生使用的數位學習筆記網站，目標是建立一個可以持續新增文章、方便搜尋與閱讀的知識庫。</p>
+      <h2>我們整理的內容</h2>
+      <ul>{categories.map((c) => <li><a href={url(`/categories/${c.slug}/`)}>{c.label}</a>：{c.description}</li>)}</ul>
+      <h2>如何使用</h2>
+      <p>你可以從分類瀏覽文章，也可以到<a href={url('/search/')}>搜尋頁</a>輸入標題、簡介或標籤的關鍵字。文章頁會依標題自動產生目錄，方便快速跳轉。</p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { categories } from '../../lib/site';
+export function getStaticPaths() {
+  return categories.map((c) => ({ params: { slug: c.slug }, props: { category: c } }));
+}
+const { category } = Astro.props;
+const list = (await getCollection('articles'))
+  .filter((a) => a.data.category === category.label)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<BaseLayout title={category.label} description={category.description}>
+  <div class="container page-title"><h1>{category.label}</h1><p class="muted">{category.description}</p></div>
+  <section class="section container">
+    {list.length > 0
+      ? <div class="grid">{list.map((a) => <ArticleCard id={a.id} {...a.data} />)}</div>
+      : <p class="empty">這個分類還沒有文章，敬請期待。</p>}
+  </section>
+</BaseLayout>

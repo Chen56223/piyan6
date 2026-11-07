@@ -1,0 +1,22 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+interface Props { title?: string; description?: string; }
+const { title, description = 'UniNotes：給大學生的數位學習筆記，整理 AI 工具、科技知識、數位工具與學習技巧。' } = Astro.props;
+const fullTitle = title ? `${title} | UniNotes` : 'UniNotes｜大學生數位學習筆記';
+---
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{fullTitle}</title>
+  </head>
+  <body>
+    <Header />
+    <main><slot /></main>
+    <Footer />
+  </body>
+</html>
